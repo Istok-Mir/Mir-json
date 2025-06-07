@@ -1,14 +1,10 @@
 from __future__ import annotations
 from typing import Any, TypedDict
 
-from Mir import LanguageServer, mir
-import sublime_aio
-from Mir.api import server_for_view, get_view_uri
+from Mir import LanguageServer, mir, server_for_view, get_view_uri, deno, ActivityIndicator, PackageStorage, run_command
 from Mir.types import DocumentUri, FormattingOptions, TextEdit
+import sublime_aio
 import sublime
-from Mir.runtime import deno
-from Mir.api import ActivityIndicator
-from Mir.package_storage import PackageStorage, run_command
 
 
 server_storage = PackageStorage(__package__, tag='0.0.1', sync_folder="./language-server")
