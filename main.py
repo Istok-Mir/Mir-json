@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any, TypedDict
 
 from Mir import LanguageServer, mir, server_for_view, get_view_uri, deno, LoaderInStatusBar, PackageStorage, command
-from Mir.types import DocumentUri, FormattingOptions, TextEdit
+from Mir.types.lsp import DocumentUri, FormattingOptions, TextEdit
 import sublime_aio
 import sublime
 
