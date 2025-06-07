@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Any, TypedDict
 
-from Mir import LanguageServer, mir, server_for_view, get_view_uri, deno, LoaderInStatusBar, PackageStorage, run_command
+from Mir import LanguageServer, mir, server_for_view, get_view_uri, deno, LoaderInStatusBar, PackageStorage, command
 from Mir.types import DocumentUri, FormattingOptions, TextEdit
 import sublime_aio
 import sublime
@@ -24,7 +24,7 @@ class JsonServer(LanguageServer):
         server_node_modules = server_storage / "language-server" / "node_modules"
         if not server_node_modules.exists():
             with LoaderInStatusBar(f'installing {self.name}'):
-                await run_command([deno.path, "install"], cwd=str(server_storage / "language-server"))
+                await command([deno.path, "install"], cwd=str(server_storage / "language-server"))
 
         await self.connect('stdio', {
             # --unstable-detect-cjs - is required to avoid the following Deno output warning
