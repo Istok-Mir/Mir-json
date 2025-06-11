@@ -7,8 +7,17 @@ import sublime_aio
 import sublime
 
 
-server_storage = PackageStorage(tag='0.0.1', sync_folder="./language-server")
+server_storage = PackageStorage(tag='0.0.1')
+server_storage.copy("./language-server")
+server_path = server_storage / "language-server" / "out" / "node" / "jsonServerMain.js"
 
+async def package_storage_setup():
+    if server_path.exists():
+        return
+    await deno.setup()
+    server_storage.copy("./language-server")
+    with LoaderInStatusBar(f'installing json'):
+        await command([deno.path, "install"], cwd=str(server_storage / "language-server"))
 
 class JsonServer(LanguageServer):
     name='json'
@@ -19,12 +28,7 @@ class JsonServer(LanguageServer):
 
     async def activate(self):
         # setup runtime and install dependencies
-        await deno.setup()
-        server_path = server_storage / "language-server" / "out" / "node" / "jsonServerMain.js"
-        server_node_modules = server_storage / "language-server" / "node_modules"
-        if not server_node_modules.exists():
-            with LoaderInStatusBar(f'installing {self.name}'):
-                await command([deno.path, "install"], cwd=str(server_storage / "language-server"))
+        await package_storage_setup()
 
         await self.connect('stdio', {
             # --unstable-detect-cjs - is required to avoid the following Deno output warning
