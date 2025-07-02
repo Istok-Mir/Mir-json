@@ -30,9 +30,10 @@ class JsonServer(LanguageServer):
         # setup runtime and install dependencies
         await package_storage_setup()
 
-        await self.connect('stdio', {
+        await self.initialize({
+            'communication_channel': 'stdio',
             # --unstable-detect-cjs - is required to avoid the following Deno output warning
-            'cmd': [deno.path,  'run', '-A',  '--unstable-detect-cjs', server_path, '--stdio'],
+            'command': [deno.path,  'run', '-A',  '--unstable-detect-cjs', server_path, '--stdio'],
             'initialization_options': {
                 "customCapabilities.rangeFormatting.editLimit": 1000,
                 "handledSchemaProtocols": ["https", "http", "file"],
@@ -49,7 +50,7 @@ class JsonSortDocumentParams(TypedDict):
     options: FormattingOptions
 
 
-class MirJsonSortDocumentCommand(sublime_aio.ViewCommand):
+class mir_json_sort_document_command(sublime_aio.ViewCommand):
     async def run(self, arguments=None) -> None:
         server = server_for_view('json', self.view)
         if server is None:
