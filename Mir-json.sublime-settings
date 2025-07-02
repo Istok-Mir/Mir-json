@@ -1,5 +1,10 @@
 // Mir-json.sublime-settings
 {
+    "json.initialization_options": {
+        "customCapabilities.rangeFormatting.editLimit": 1000,
+        "handledSchemaProtocols": ["https", "http", "file"],
+        "provideFormatter": true
+    },
     "json.validate.enable": true,
     "json.format.enable": true,
     "json.resultLimit": 5000,

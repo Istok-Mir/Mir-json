@@ -34,11 +34,7 @@ class JsonServer(LanguageServer):
             'communication_channel': 'stdio',
             # --unstable-detect-cjs - is required to avoid the following Deno output warning
             'command': [deno.path,  'run', '-A',  '--unstable-detect-cjs', server_path, '--stdio'],
-            'initialization_options': {
-                "customCapabilities.rangeFormatting.editLimit": 1000,
-                "handledSchemaProtocols": ["https", "http", "file"],
-                "provideFormatter": True,
-            },
+            'initialization_options': self.settings.get('json.initialization_options'),
         })
         self.send_notification('json/schemaAssociations', [get_schemas()])
 
