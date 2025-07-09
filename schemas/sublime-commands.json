@@ -1,0 +1,41 @@
+{
+  "$schema": "sublime://schemas/sublime-base",
+  "$id": "sublime://schemas/sublime-commands",
+  "title": "Sublime Text Commands",
+  "allowComments": true,
+  "allowTrailingCommas": true,
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "caption",
+      "command"
+    ],
+    "properties": {
+      "caption": {
+        "type": "string",
+        "description": "Title of the command"
+      },
+      "command": {
+        "type": "string",
+        "description": "Name of the command to execute"
+      },
+      "args": {
+        "description": "Arguments to pass to the command to execute",
+        "type": "object"
+      },
+      "platform": {
+        "description": "Controls what platforms the entry is shown on",
+        "enum": [
+          "OSX",
+          "!OSX",
+          "Windows",
+          "!Windows",
+          "Linux",
+          "!Linux"
+        ]
+      }
+    },
+    "additionalProperties": false
+  }
+}

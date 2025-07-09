@@ -1,0 +1,174 @@
+{
+  "$schema": "sublime://schemas/sublime-base",
+  "$id": "sublime://schemas/sublime-keymap",
+  "title": "Sublime Text Keymap",
+  "allowComments": true,
+  "allowTrailingCommas": true,
+  "type": "array",
+  "definitions": {
+    "keysSchema": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contextSchema": {
+      "type": "array",
+      "defaultSnippets": [
+        {
+          "body": [
+            {
+              "key": "$1",
+              "operator": "equal",
+              "operand": "$0"
+            }
+          ]
+        }
+      ],
+      "items": {
+        "required": [
+          "key"
+        ],
+        "type": "object",
+        "defaultSnippets": [
+          {
+            "body": {
+              "key": "$1",
+              "operator": "equal",
+              "operand": "$0"
+            }
+          }
+        ],
+        "properties": {
+          "key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Condition that must evaluate to true for the binding to be active.",
+                "enum": [
+                  "auto_complete_visible",
+                  "eol_selector",
+                  "following_text",
+                  "has_next_field",
+                  "has_prev_field",
+                  "is_recording_macro",
+                  "last_command",
+                  "last_modifying_command",
+                  "num_selections",
+                  "popup_visible",
+                  "preceding_text",
+                  "read_only",
+                  "selection_empty",
+                  "selector",
+                  "text",
+                  "panel",
+                  "panel_visible",
+                  "panel_has_focus",
+                  "overlay_visible",
+                  "overlay_has_focus",
+                  "overlay_name",
+                  "group_has_multiselect",
+                  "group_has_transient_sheet",
+                  "has_snippet",
+                  "panel_type"
+                ],
+                "enumDescriptions": [
+                  "If the auto complete dropdown is visible",
+                  "A selector to match the scope name at the end of the current line",
+                  "The text after the selection",
+                  "If the selection is a field in a snippet where a subsequent field exists",
+                  "If the selection is a field in a snippet where a previous field exists",
+                  "If the user is currently recording a macro",
+                  "The name of the last command that was run",
+                  "The name of the last command run that modified a buffer",
+                  "The number of selection in the current buffer",
+                  "If a popup is currently being displayed",
+                  "The text before the selection",
+                  "If the buffer is marked read only",
+                  "If the current selection does not contain any characters",
+                  "A selector to match the scope name of the selection",
+                  "The text of the selection",
+                  "The name of the current panel",
+                  "If a panel is visible",
+                  "If a panel is visible and has focus",
+                  "If the quick panel is visible",
+                  "If the overlay currently open has focus",
+                  "The name of the currently focused overlay",
+                  "If the currently focused group has multi selected tabs",
+                  "If the currently focused group has a transient sheet",
+                  "If the word to the immediate left of the cursor can be expanded to a snippet",
+                  "The type of the focused panel"
+                ]
+              },
+              {
+                "type": "string",
+                "description": "Condition that must evaluate to true for the key binding to be active"
+              }
+            ]
+          },
+          "operator": {
+            "type": "string",
+            "markdownDescription": "The operator used to match the given `key` and the `operand`.",
+            "enum": [
+              "equal",
+              "not_equal",
+              "not_regex_contains",
+              "not_regex_match",
+              "regex_contains",
+              "regex_match"
+            ]
+          },
+          "operand": {
+            "default": true,
+            "oneOf": [
+              { "type": "integer" },
+              { "type": "string" },
+              { "type": "boolean" }
+            ]
+          },
+          "match_all": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "If `true`, then the condition must evaluate to true for all selections."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "items": {
+    "required": [
+      "keys",
+      "command"
+    ],
+    "type": "object",
+    "defaultSnippets": [
+      {
+        "body": {
+          "keys": "$1",
+          "command": "$2",
+          "context": "$3"
+        }
+      }
+    ],
+    "properties": {
+      "keys": {
+        "$ref": "#/definitions/keysSchema",
+        "description": "Array of single or multiple keys"
+      },
+      "command": {
+        "type": "string",
+        "description": "Name of the command to execute"
+      },
+      "context": {
+        "$ref": "#/definitions/contextSchema",
+        "description": "Context in which binding is allowed to execute."
+      },
+      "args": {
+        "description": "Arguments to pass to the command to execute.",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false
+  }
+}

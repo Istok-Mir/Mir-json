@@ -1,10 +1,14 @@
 from __future__ import annotations
-from typing import Any, TypedDict
+from typing import Any, Tuple, TypedDict
 
-from Mir import LanguageServer, mir, server_for_view, get_view_uri, deno, LoaderInStatusBar, PackageStorage, command
-from Mir.types.lsp import DocumentUri, FormattingOptions, TextEdit
+from Mir import LanguageServer, mir, server_for_view, get_view_uri, deno, LoaderInStatusBar, PackageStorage, command, file_name_to_uri
+from Mir.libs.lsp.server import mir_logger
+from Mir.types.lsp import DocumentUri, FormattingOptions, TextEdit, WorkspaceFolder
 import sublime_aio
+from sublime_lib import ResourcePath
 import sublime
+from os import path
+from urllib.parse import quote
 
 
 server_storage = PackageStorage(tag='0.0.1')
@@ -30,13 +34,67 @@ class JsonServer(LanguageServer):
         # setup runtime and install dependencies
         await package_storage_setup()
 
+        user_schemas = resolve_file_paths(
+          self.initialize_params['workspaceFolders'],
+          self.settings.get('json.userSchemas') or []
+        )
+
+        schema_uri_to_content: dict= {}
+        schema_list = []
+        package_name = __package__
+        for schema in ['json-schemas_extra.json', 'json-schemas.json']:
+            path = 'Packages/{}/{}'.format(package_name, schema)
+            schemas = parse_schema(ResourcePath(path)) or []
+            for schema in schemas:
+                file_matches = schema.get('fileMatch')
+                if file_matches:
+                    schema['fileMatch'] = [quote(fm, safe="/*!") for fm in file_matches]
+                schema_list.append(schema)
+
+        resources = ResourcePath.glob_resources('sublime-package.json')
+        for resource in resources:
+            schema: dict | None = None
+            try:
+                schema = sublime.decode_value(resource.read_text())
+            except Exception as e:
+                mir_logger.error(f'Error parsing sublime-package.json {resource.name}', exc_info=e)
+                continue
+            if not schema:
+                continue
+            sublime_package_settings = schema.get('contributions', {}).get('settings')
+            for s in sublime_package_settings:
+                file_patterns = s.get('file_patterns', [])
+                schema_content = s.get('schema')
+                uri = schema_content.get('$id')
+                schema_uri_to_content[uri] = sublime.encode_value(schema_content, pretty=False)
+                schema_list.append({'fileMatch':  [quote(fm, safe="/*!") for fm in file_patterns], 'uri': uri})
+
+        def handle_vscode_content(params: Tuple[str]):
+            uri = params[0]
+            if uri in schema_uri_to_content:
+                return schema_uri_to_content[uri]
+            if uri.startswith('sublime://'):
+                schema_path = uri.replace('sublime://', '')
+                schema_components = schema_path.split('/')
+                domain = schema_components[0]
+                if domain == 'schemas':
+                    # Internal schema - 1:1 schema path to file path mapping.
+                    schema_path = 'Packages/{}/{}.json'.format(package_name, schema_path)
+                    content =  sublime.encode_value(sublime.decode_value(ResourcePath(schema_path).read_text()), pretty=False)
+                    schema_uri_to_content[uri] = content
+                    return content
+            print('{}: Unknown schema URI "{}"'.format(package_name, uri))
+            return None
+
+        self.on_request('vscode/content', handle_vscode_content)
+
         await self.initialize({
             'communication_channel': 'stdio',
             # --unstable-detect-cjs - is required to avoid the following Deno output warning
             'command': [deno.path,  'run', '-A',  '--unstable-detect-cjs', server_path, '--stdio'],
             'initialization_options': self.settings.get('json.initialization_options'),
         })
-        self.send_notification('json/schemaAssociations', [get_schemas()])
+        self.send_notification('json/schemaAssociations', [get_schemas() + schema_list + user_schemas ])
 
 
 mir.commands.register_command('json.sort', 'mir_json_sort_document')
@@ -44,6 +102,19 @@ mir.commands.register_command('json.sort', 'mir_json_sort_document')
 class JsonSortDocumentParams(TypedDict):
     uri: DocumentUri
     options: FormattingOptions
+
+
+class Schema(TypedDict):
+    fileMatch: list[str]
+    uri: str
+
+
+def parse_schema(resource: ResourcePath) -> Any:
+    try:
+        return sublime.decode_value(resource.read_text())
+    except Exception:
+        print('Failed parsing schema "{}"'.format(resource.file_path()))
+        return None
 
 
 class mir_json_sort_document_command(sublime_aio.ViewCommand):
@@ -78,6 +149,16 @@ def formatting_options(settings: sublime.Settings) -> dict[str, Any]:
         # Trim all newlines after the final newline at the end of the file. (sine 3.15)
         "trimFinalNewlines": settings.get("ensure_newline_at_eof_on_save", False)
     }
+
+def resolve_file_paths(workspace_folders: list[WorkspaceFolder], schemas: list[Schema]) -> list[Schema]:
+    if not workspace_folders:
+        return schemas
+    for schema in schemas:
+        # Filesystem paths are resolved relative to the first workspace folder.
+        if schema['uri'].startswith(('.', '/')):
+            absolute_path = path.normpath(path.join(workspace_folders[0].path, schema['uri']))
+            schema['uri'] = file_name_to_uri(absolute_path)
+    return schemas
 
 def get_schemas():
     return [

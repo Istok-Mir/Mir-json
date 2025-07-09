@@ -1,0 +1,6 @@
+{
+  "$schema": "sublime://schemas/sublime-base",
+  "$id": "sublime://schemas/sublime-settings",
+  "allowComments": true,
+  "allowTrailingCommas": true
+}

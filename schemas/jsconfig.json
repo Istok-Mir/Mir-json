@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "sublime://schemas/jsconfig",
+  "allowComments": true,
+  "allowTrailingCommas": true,
+  "title": "JSON schema for the JavaScript configuration file",
+  "type": "object",
+  "default": {
+    "compilerOptions": {
+      "target": "es6"
+    }
+  }
+}

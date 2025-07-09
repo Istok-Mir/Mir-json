@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "sublime://schemas/tsconfig",
+  "allowComments": true,
+  "allowTrailingCommas": true,
+  "title": "JSON schema for the TypeScript compiler's configuration file",
+  "type": "object",
+  "default": {
+    "compilerOptions": {
+      "module": "commonjs"
+    },
+    "exclude": [
+      "node_modules"
+    ]
+  }
+}

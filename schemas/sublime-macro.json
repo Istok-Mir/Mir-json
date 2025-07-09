@@ -1,0 +1,29 @@
+{
+  "$schema": "sublime://schemas/sublime-base",
+  "$id": "sublime://schemas/sublime-macro",
+  "title": "Sublime Text Macro",
+  "allowComments": true,
+  "allowTrailingCommas": true,
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["command"],
+    "defaultSnippets": [
+      {
+        "label": "Rule",
+        "body": {"command": "$1"}
+      }
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "command": {
+        "type": "string",
+        "markdownDescription": "The name of the command to execute."
+      },
+      "args": {
+        "type": ["object", "null"],
+        "markdownDescription": "Arguments to pass to the command."
+      }
+    }
+  }
+}

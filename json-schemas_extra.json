@@ -1,0 +1,78 @@
+[
+  {
+    "uri": "sublime://schemas/sublime-base"
+  },
+  {
+    "fileMatch": ["/*.sublime-build"],
+    "uri": "sublime://schemas/sublime-build"
+  },
+  {
+    "fileMatch": ["/*.sublime-color-scheme", "/*.hidden-color-scheme"],
+    "uri": "sublime://schemas/sublime-color-scheme"
+  },
+  {
+    "fileMatch": ["/*.sublime-commands"],
+    "uri": "sublime://schemas/sublime-commands"
+  },
+  {
+    "fileMatch": ["/*.sublime-completions"],
+    "uri": "sublime://schemas/sublime-completions"
+  },
+  {
+    "fileMatch": ["/*.sublime-keymap"],
+    "uri": "sublime://schemas/sublime-keymap"
+  },
+  {
+    "fileMatch": ["/*.sublime-macro"],
+    "uri": "sublime://schemas/sublime-macro"
+  },
+  {
+    "fileMatch": ["/*.sublime-menu"],
+    "uri": "sublime://schemas/sublime-menu"
+  },
+  {
+    "fileMatch": ["/*.sublime-mousemap"],
+    "uri": "sublime://schemas/sublime-mousemap"
+  },
+  {
+    "fileMatch": ["/*.sublime-project"],
+    "uri": "sublime://schemas/sublime-project"
+  },
+  {
+    "fileMatch": ["/*.sublime-settings"],
+    "uri": "sublime://schemas/sublime-settings"
+  },
+  {
+    "fileMatch": ["/*.sublime-theme", "/*.hidden-theme"],
+    "uri": "sublime://schemas/sublime-theme"
+  },
+  {
+    "fileMatch": ["/.vscode/*.json"],
+    "uri": "sublime://schemas/vscode-base"
+  },
+  {
+    "fileMatch": ["/package.json"],
+    "uri": "sublime://schemas/package-json-eslint"
+  },
+  {
+    "fileMatch": [
+      "/Preferences.sublime-settings",
+      "/Preferences (Linux).sublime-settings",
+      "/Preferences (OSX).sublime-settings",
+      "/Preferences (Windows).sublime-settings"
+    ],
+    "uri": "sublime://schemas/preferences.sublime-settings"
+  },
+  {
+    "fileMatch": ["/sublime-package.json"],
+    "uri": "sublime://schemas/sublime-package-schema"
+  },
+  {
+    "fileMatch": ["/tsconfig.json", "/tsconfig.*.json", "/tsconfig-*.json"],
+    "uri": "sublime://schemas/tsconfig"
+  },
+  {
+    "fileMatch": ["/jsconfig.json", "/jsconfig.*.json", "/jsconfig-*.json"],
+    "uri": "sublime://schemas/jsconfig"
+  }
+]
